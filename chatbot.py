@@ -1,15 +1,17 @@
 import streamlit as st
-from transformers import pipeline
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-# Load model only once
 @st.cache_resource
 def load_qa_model():
-    return pipeline(
-        "text2text-generation",
-        model="google/flan-t5-small"
-    )
+    model_name = "google/flan-t5-small"
 
-qa_model = load_qa_model()
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+
+    return tokenizer, model
+
+
+tokenizer, model = load_qa_model()
 
 
 def answer_question(context, question):
@@ -24,10 +26,11 @@ def answer_question(context, question):
     {question}
     """
 
-    result = qa_model (
-        prompt,
-        max_length=200,
-        truncation=True
+    inputs = tokenizer(prompt, return_tensors="pt", truncation=True)
+
+    outputs = model.generate(
+        inputs["input_ids"],
+        max_length=200
     )
 
-    return result[0]["generated_text"]
+    return tokenizer.decode(outputs[0], skip_special_tokens=True)
