@@ -1,35 +1,39 @@
 import streamlit as st
-from transformers import pipeline
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-# Load model only once
 @st.cache_resource
 def load_model():
-    return pipeline(
-        "summarization",
-        model="sshleifer/distilbart-cnn-12-6"
-    )
+    model_name = "sshleifer/distilbart-cnn-12-6"
 
-summarizer = load_model()
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+
+    return tokenizer, model
+
+
+tokenizer, model = load_model()
+
 
 def summarize_text(text):
 
     if not text or len(text.strip()) == 0:
-        return "No text found to summarize."
+        return "No text found."
 
-    chunk_size = 700
-    chunks = [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
+    inputs = tokenizer(
+        text,
+        return_tensors="pt",
+        truncation=True,
+        max_length=1024
+    )
 
-    summaries = []
+    outputs = model.generate(
+        inputs["input_ids"],
+        max_length=150,
+        min_length=40,
+        length_penalty=2.0,
+        num_beams=4
+    )
 
-    for chunk in chunks[:5]:   # limit chunks for speed
-        result = summarizer(
-            chunk,
-            max_length=120,
-            min_length=30,
-            do_sample=False,
-            truncation=True
-        )
+    summary = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-        summaries.append(result[0]["summary_text"])
-
-    return " ".join(summaries)
+    return summary
