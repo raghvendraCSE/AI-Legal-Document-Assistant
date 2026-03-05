@@ -1,17 +1,19 @@
-from transformers import pipeline
 import streamlit as st
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+import torch
 
 @st.cache_resource
 def load_simplifier():
     model_name = "google/flan-t5-small"
-    
-    return pipeline(
-        task="text2text-generation",
-        model=model_name,
-        tokenizer=model_name
-    )
 
-simplifier = load_simplifier()
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+
+    return tokenizer, model
+
+
+tokenizer, model = load_simplifier()
+
 
 def simplify_document(text):
 
@@ -20,11 +22,13 @@ def simplify_document(text):
 
     prompt = "simplify: " + text
 
-    result = simplifier(
-        prompt,
-        max_length=120,
-        do_sample=False,
-        truncation=True
+    inputs = tokenizer(prompt, return_tensors="pt", truncation=True)
+
+    outputs = model.generate(
+        inputs["input_ids"],
+        max_length=120
     )
 
-    return result[0]["generated_text"]
+    result = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    return result
