@@ -3,7 +3,7 @@ from transformers import pipeline
 # Load simplification model
 simplifier = pipeline(
     "text2text-generation",
-    model="t5-small"
+    model="google/flan-t5-small"
 )
 
 def simplify_document(text):
@@ -20,5 +20,6 @@ def simplify_document(text):
         do_sample=False,
         truncation=True
     )
+
 
     return result[0]["generated_text"]
