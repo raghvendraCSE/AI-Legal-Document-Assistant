@@ -57,7 +57,8 @@ legal-document-ai/
 ├── requirements.txt      # Python dependencies
 └── README.md             # Project documentation
 ```
-
+## Live Demo
+https://ai-legal-document-assistant-yxb2d42yea8mehdjlkbzhd.streamlit.app/
 ---
 
 # ⚙️ Installation
