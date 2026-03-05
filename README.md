@@ -65,7 +65,7 @@ legal-document-ai/
 Clone the repository
 
 ```
-git clone https://github.com/your-username/legal-document-ai.git
+https://github.com/raghvendraCSE/AI-Legal-Document-Assistant
 ```
 
 Move into the project folder
