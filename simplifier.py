@@ -1,10 +1,16 @@
+import streamlit as st
 from transformers import pipeline
 
-# Load simplification model
-simplifier = pipeline(
-    "text2text-generation",
-    model="google/flan-t5-small"
-)
+# Load simplification model only once
+@st.cache_resource
+def load_simplifier():
+    return pipeline(
+        "text2text-generation",
+        model="google/flan-t5-small"
+    )
+
+simplifier = load_simplifier()
+
 
 def simplify_document(text):
 
@@ -20,6 +26,5 @@ def simplify_document(text):
         do_sample=False,
         truncation=True
     )
-
 
     return result[0]["generated_text"]
