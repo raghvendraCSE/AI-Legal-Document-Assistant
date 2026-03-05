@@ -1,14 +1,20 @@
 from transformers import pipeline
+import streamlit as st
 
-# Load simplification model
-simplifier = pipeline(
-    "text2text-generation",
-    model="t5-small"
-)
+@st.cache_resource
+def load_simplifier():
+    model_name = "google/flan-t5-small"
+    
+    return pipeline(
+        task="text2text-generation",
+        model=model_name,
+        tokenizer=model_name
+    )
+
+simplifier = load_simplifier()
 
 def simplify_document(text):
 
-    # Safety check
     if not text or len(text.strip()) == 0:
         return "No text found."
 
