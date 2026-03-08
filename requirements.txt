@@ -1,6 +1,6 @@
 streamlit>=1.30
-transformers==4.37.2
-torch==2.2.0
+transformers
+torch
 sentence-transformers
 faiss-cpu
 PyPDF2
