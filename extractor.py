@@ -2,18 +2,11 @@ import PyPDF2
 
 def extract_text(file):
 
+    pdf_reader = PyPDF2.PdfReader(file)
+
     text = ""
 
-    try:
-        reader = PyPDF2.PdfReader(file)
-
-        for page in reader.pages:
-            page_text = page.extract_text()
-
-            if page_text:
-                text += page_text
-
-    except Exception as e:
-        print("Error reading PDF:", e)
+    for page in pdf_reader.pages:
+        text += page.extract_text()
 
     return text
