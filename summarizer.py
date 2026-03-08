@@ -3,10 +3,11 @@ from transformers import pipeline
 
 @st.cache_resource
 def load_model():
-    return pipeline(
-        "summarization",
+    summarizer = pipeline(
+        task="summarization",
         model="sshleifer/distilbart-cnn-12-6"
     )
+    return summarizer
 
 summarizer = load_model()
 
