@@ -6,21 +6,24 @@ from chunking import split_text
 from vector_store import create_vector_store, search_document
 from chatbot import answer_question
 
+st.set_page_config(page_title="AI Legal Document Assistant")
 
 st.title("📄 AI Legal Document Assistant")
 
-
+# -----------------------------
 # Chat history storage
+# -----------------------------
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-
 uploaded_file = st.file_uploader(
     "Upload Legal Document",
-    type=["pdf","txt"]
+    type=["pdf", "txt"]
 )
 
-
+# -----------------------------
+# File Uploaded
+# -----------------------------
 if uploaded_file is not None:
 
     # Extract text
@@ -29,7 +32,12 @@ if uploaded_file is not None:
     else:
         text = uploaded_file.read().decode()
 
-    # Document statistics
+    # Limit text size to prevent memory crash
+    text = text[:5000]
+
+    # -----------------------------
+    # Document Statistics
+    # -----------------------------
     st.header("📊 Document Statistics")
 
     word_count = len(text.split())
@@ -38,34 +46,42 @@ if uploaded_file is not None:
     st.write("Total Words:", word_count)
     st.write("Total Sentences:", sentence_count)
 
-    # Show preview
+    # -----------------------------
+    # Document Preview
+    # -----------------------------
     st.header("📑 Document Preview")
     st.write(text[:800])
 
+    # -----------------------------
     # Split document into chunks
+    # -----------------------------
     chunks = split_text(text)
 
+    # -----------------------------
     # Create vector database
+    # -----------------------------
     index, embeddings = create_vector_store(chunks)
 
-
-    # Simplify document
+    # -----------------------------
+    # Simplify Document
+    # -----------------------------
     if st.button("Simplify Document"):
 
         with st.spinner("Simplifying legal text..."):
 
             results = []
 
-            for chunk in chunks[:5]:
-                  results.append(simplify_document(chunk))
+            for chunk in chunks[:3]:   # limit chunks for memory
+                results.append(simplify_document(chunk))
 
             simplified_text = " ".join(results)
 
         st.header("🧠 Simplified Text")
         st.write(simplified_text)
 
-
-    # Generate summary
+    # -----------------------------
+    # Generate Summary
+    # -----------------------------
     if st.button("Generate Summary"):
 
         with st.spinner("Generating summary..."):
@@ -75,11 +91,9 @@ if uploaded_file is not None:
         st.header("📌 Document Summary")
         st.write(summary)
 
-
-    # -----------------------
+    # -----------------------------
     # CHATBOT SECTION
-    # -----------------------
-
+    # -----------------------------
     st.header("💬 Chat With Document")
 
     # Display chat history
@@ -88,22 +102,18 @@ if uploaded_file is not None:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-
     # Chat input
     query = st.chat_input("Ask a question about the document")
-
 
     if query:
 
         # Show user message
         st.chat_message("user").markdown(query)
 
-        # Save user message
         st.session_state.messages.append({
             "role": "user",
             "content": query
         })
-
 
         with st.spinner("Searching document..."):
 
@@ -113,19 +123,17 @@ if uploaded_file is not None:
 
             answer = answer_question(context, query)
 
-
-        # Show AI message
+        # Show AI response
         with st.chat_message("assistant"):
             st.markdown(answer)
 
-
-        # Save AI response
         st.session_state.messages.append({
             "role": "assistant",
             "content": answer
         })
 
-
-    # Clear chat button
+    # -----------------------------
+    # Clear Chat Button
+    # -----------------------------
     if st.button("Clear Chat"):
         st.session_state.messages = []
