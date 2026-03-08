@@ -3,5 +3,5 @@ transformers
 torch
 sentence-transformers
 faiss-cpu
-pdfplumber
+PyPDF2
 python-docx
