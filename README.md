@@ -58,7 +58,7 @@ legal-document-ai/
 └── README.md             # Project documentation
 ```
 ## Live Demo
-https://ai-legal-document-assistant-yxb2d42yea8mehdjlkbzhd.streamlit.app/
+https://ai-legal-document-assistant-ergfsi5tabqbpbc3xyepjk.streamlit.app/
 ---
 
 # ⚙️ Installation
