@@ -40,7 +40,7 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 @st.cache_resource
 def load_qa_model():
-    model_name = "google/flan-t5-base"   # better than small; use flan-t5-small if memory is low
+    model_name = "google/flan-t5-small"   # better than small; use flan-t5-small if memory is low
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
     return tokenizer, model
