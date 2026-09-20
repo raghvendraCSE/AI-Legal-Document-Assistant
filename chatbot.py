@@ -48,7 +48,11 @@ def load_qa_model():
 tokenizer, model = load_qa_model()
 
 def answer_question(context, question):
-    # Question goes FIRST so it is never cut off by truncation
+    # Trim only the context so the question and instruction always fit
+    ctx_ids = tokenizer(context, add_special_tokens=False,
+                        truncation=True, max_length=350)["input_ids"]
+    context = tokenizer.decode(ctx_ids)
+
     prompt = (
         f"Question: {question}\n\n"
         f"Context: {context}\n\n"
