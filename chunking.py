@@ -1,10 +1,20 @@
-def split_text(text, chunk_size=700):
+# def split_text(text, chunk_size=700):
 
+#     words = text.split()
+#     chunks = []
+
+#     for i in range(0, len(words), chunk_size):
+#         chunk = " ".join(words[i:i+chunk_size])
+#         chunks.append(chunk)
+
+#     return chunks
+
+def split_text(text, chunk_size=150, overlap=30):
     words = text.split()
     chunks = []
-
-    for i in range(0, len(words), chunk_size):
-        chunk = " ".join(words[i:i+chunk_size])
-        chunks.append(chunk)
-
+    step = chunk_size - overlap
+    for i in range(0, len(words), step):
+        chunk = " ".join(words[i:i + chunk_size])
+        if chunk:
+            chunks.append(chunk)
     return chunks
